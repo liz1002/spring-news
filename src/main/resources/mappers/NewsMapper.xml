@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.NewsMapper">
+	
+	<resultMap type="NewsVO" id="NewsResult">
+		<id column="n_no" property="nNo"/>
+		<result column="n_no" property="nNo"/>
+		<result column="n_title" property="nTitle"/>
+		<result column="n_subtitle" property="nSubtitle"/>
+		<result column="n_path" property="nPath"/>
+		<result column="n_source" property="nSource"/>
+		<result column="n_regdate" property="nRegdate"/>
+		<result column="c_name" property="cName"/>
+		<result column="g_name" property="gName"/>
+		<result column="n_link" property="nLink"/>
+		<result column="d_content" property="dContent"/>
+	</resultMap>
+
+	<select id="selectList" resultMap="NewsResult">
+		select * from news as n join category as c
+		group by n_no order by n_no desc
+	</select>
+	
+	<select id="selectListByCName" resultMap="NewsResult">
+		select * from news as n join category as c 
+		where n.c_name=#{cName}
+		group by n_no order by n_no desc
+	</select>
+	
+	<select id="selectListByNo" resultMap="NewsResult">
+		select * from news as n join detail as d using(n_no)
+		where n.n_no=#{nNo}
+	</select>
+	
+	<insert id="insert" parameterType="NewsVO" useGeneratedKeys="true" keyProperty="nNo">
+		insert into news(n_title, n_subtitle, n_path, n_source, n_regdate, c_name, g_name, n_link)
+		values(#{nTitle}, #{nSubtitle}, #{nPath}, #{nSource}, now(), #{cName}, #{gName}, #{nLink})
+	</insert>
+	
+	<insert id="insertDetail" parameterType="NewsVO">
+		insert into detail(n_no, d_content) values(#{nNo}, #{dContent})
+	</insert>
+</mapper>
